@@ -1,5 +1,8 @@
-use web_server::launch_server;
+use std::sync::Arc;
+
+use web_server::Server;
 
 fn main() -> std::io::Result<()> {
-    launch_server("127.0.0.1:80")
+    let server = Arc::new(Server::new("127.0.0.1:80", "www"));
+    server.run()
 }
