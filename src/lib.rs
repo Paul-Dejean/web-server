@@ -3,6 +3,7 @@ use std::io::BufRead;
 use std::io::BufReader;
 use std::io::Write;
 use std::net::{TcpListener, TcpStream};
+use std::thread;
 
 const STATIC_FILES_DIR_PATH: &str = "www";
 
@@ -12,9 +13,11 @@ pub fn launch_server(addr: &str) -> std::io::Result<()> {
     for stream in listener.incoming() {
         match stream {
             Ok(stream) => {
-                if let Err(error) = handle_client(stream) {
-                    eprintln!("Client handling failed: {}", error);
-                }
+                thread::spawn(move || {
+                    if let Err(error) = handle_client(stream) {
+                        eprintln!("Client handling failed: {}", error);
+                    }
+                });
             }
             Err(error) => eprintln!("Error: {}", error),
         }
